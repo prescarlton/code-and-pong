@@ -3,11 +3,19 @@ import type { Config } from "tailwindcss"
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  safelist: [
+    "bg-yellow-500",
+    "border-yellow-500",
+    "bg-amber-700",
+    "border-amber-700",
+    "bg-slate-300",
+    "border-slate-300",
+  ],
   prefix: "",
   theme: {
     container: {

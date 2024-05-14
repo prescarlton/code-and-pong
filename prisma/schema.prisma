@@ -12,3 +12,28 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Game {
+  id      String   @id @default(nanoid(12))
+  created DateTime @default(now())
+  updated DateTime @default(now()) @updatedAt
+
+  players String[]
+  winners String[]
+
+  scores GameScore[]
+
+  @@map("games")
+}
+
+model GameScore {
+  id     String @id @default(nanoid(12))
+  gameId String @map("game_id")
+
+  scoringUserId       String @map("scoring_user_id")
+  scoredAgainstUserId String @map("scored_against_user_id")
+
+  Game Game @relation(fields: [gameId], references: [id])
+
+  @@map("game_scores")
+}
