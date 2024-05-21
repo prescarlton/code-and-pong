@@ -10,13 +10,14 @@ export interface ShortUser {
 
 export default async function listUsers() {
   const { userId } = auth()
-  return clerkClient.users.getUserList({ limit: 200 }).then((res) =>
-    res.data
+  return clerkClient.users.getUserList({ limit: 200 }).then((res) => {
+    console.log(res)
+    return res.data
       .map((u) => ({
         id: u.id,
         fullName: u.fullName,
         imageUrl: u.imageUrl,
       }))
-      .filter((u) => u.id !== userId),
-  )
+      .filter((u) => u.id !== userId)
+  })
 }

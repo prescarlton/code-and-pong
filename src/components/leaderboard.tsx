@@ -13,9 +13,10 @@ const Leaderboard = async () => {
         {topPlayers.map((player, i) => (
           <TopLeaderboardPlayer
             key={player.id}
-            position={i}
-            firstName=""
-            lastName=""
+            position={i + 1}
+            fullName={player.fullName}
+            profilePic={player.imageUrl}
+            points={player.points}
           />
         ))}
       </div>
@@ -23,9 +24,10 @@ const Leaderboard = async () => {
         {everybodyElse.map((player, i) => (
           <LeaderboardPlayer
             key={player.id}
-            position={i}
-            firstName=""
-            lastName=""
+            position={i + 4}
+            fullName={player.fullName!}
+            profilePic={player.imageUrl}
+            points={player.points}
           />
         ))}
       </div>

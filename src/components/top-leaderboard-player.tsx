@@ -1,18 +1,19 @@
 import getPositionColor from "@/lib/getPositionColor"
 import { Crown } from "lucide-react"
+import Image from "next/image"
 
 interface TopLeaderboardPlayerProps {
   profilePic?: string
-  firstName: string
-  lastName: string
+  fullName: string | null
   position: number
+  points: number
 }
 
 const TopLeaderboardPlayer = ({
   profilePic,
-  firstName,
-  lastName,
+  fullName,
   position,
+  points,
 }: TopLeaderboardPlayerProps) => {
   return (
     <div
@@ -22,17 +23,25 @@ const TopLeaderboardPlayer = ({
         className={`${position === 1 ? "w-24" : "w-16"} aspect-square rounded-full bg-blue-200 relative border-2 border-${getPositionColor(position)}`}
       >
         {position === 1 && (
-          <Crown className="absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-500 fill-yellow-500" />
+          <Crown className="absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-500 fill-yellow-500 z-20" />
         )}
         <div
-          className={`absolute -bottom-3 left-1/2 -translate-x-1/2 bg-${getPositionColor(position)} w-7 aspect-square rounded-full border-2 border-white flex items-center justify-center`}
+          className={`absolute -bottom-3 left-1/2 -translate-x-1/2 bg-${getPositionColor(position)} w-7 aspect-square rounded-full border-2 border-white flex items-center justify-center z-20`}
         >
           {position}
         </div>
+        {profilePic && (
+          <Image
+            src={profilePic}
+            fill
+            alt={fullName || "Profile"}
+            className="rounded-full z-10"
+          />
+        )}
       </div>
-      <div className="flex flex-col gap-1 text-center">
-        <h3 className="font-bold">{firstName}</h3>
-        <p className="text-lime-500">3.4k points</p>
+      <div className="flex flex-col gap-1 text-center ">
+        <h3 className="font-bold">{fullName?.split(" ")[0]}</h3>
+        <p className="text-lime-500">{points} points</p>
       </div>
     </div>
   )
