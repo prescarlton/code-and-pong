@@ -1,6 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 
-const isProtectedRoute = createRouteMatcher(["/score-keeper(.*)"])
+const isProtectedRoute = createRouteMatcher([
+  "/score-keeper(.*)",
+  "/past-round(.*)",
+])
 
 export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) auth().protect()
