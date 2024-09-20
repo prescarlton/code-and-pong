@@ -8,6 +8,9 @@ const Leaderboard = async () => {
   const everybodyElse = players.slice(3)
   return (
     <div className="flex flex-col gap-2">
+      {players.length === 0 && (
+        <p className="text-center">No games have been played yet.</p>
+      )}
       <div className="flex flex-row justify-evenly items-center">
         {topPlayers.map((player, i) => (
           <TopLeaderboardPlayer

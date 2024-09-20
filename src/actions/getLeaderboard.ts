@@ -27,5 +27,7 @@ export default async function getLeaderboard() {
     }
   })
   // sort users by highest score
-  return users.sort((a, b) => b.elo - a.elo)
+  return users
+    .sort((a, b) => b.elo - a.elo)
+    .filter((u) => u.gamesWon > 0 || u.gamesLost > 0)
 }
