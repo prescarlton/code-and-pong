@@ -1,7 +1,9 @@
 "use server"
 
+import calculateElo from "@/lib/calculate-elo"
 import { prisma } from "@/prismaClient"
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
+import { revalidatePath } from "next/cache"
 
 interface CreateGameParams {
   opponentId: string
@@ -16,6 +18,32 @@ export default async function createGame({
 }: CreateGameParams) {
   const { userId } = auth()
   if (!userId) throw new Error("Unauthorized")
+
+  // grab the players' elo scores
+  const myUser = await clerkClient.users.getUser(userId)
+  const myMetadata = myUser.publicMetadata as { elo: number }
+
+  const opponentUser = await clerkClient.users.getUser(opponentId)
+  const opponentMetadata = opponentUser.publicMetadata as { elo: number }
+
+  const myElo = myMetadata.elo || 400
+  const opponentElo = opponentMetadata.elo || 400
+
+  // calculate the new elo scores
+  const { p1NewElo, p2NewElo } = calculateElo({
+    p1Elo: myElo,
+    p2Elo: opponentElo,
+    p1Score: myScore,
+    p2Score: opponentScore,
+  })
+
+  // update the elo scores
+  await clerkClient.users.updateUser(userId, {
+    publicMetadata: { ...myMetadata, elo: p1NewElo },
+  })
+  await clerkClient.users.updateUser(opponentId, {
+    publicMetadata: { ...opponentMetadata, elo: p2NewElo },
+  })
 
   // create the game
   const game = await prisma.game.create({
@@ -44,6 +72,7 @@ export default async function createGame({
       })),
     ],
   })
+  revalidatePath("/")
   // find out who da winner is
   return game
 }

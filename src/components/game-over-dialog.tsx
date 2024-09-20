@@ -11,7 +11,7 @@ import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import Image from "next/image"
 import { Crown } from "lucide-react"
-import createGame from "@/actions/createGame"
+import createGame from "@/actions/create-game"
 
 interface GameOverDialogProps {
   myScore: number

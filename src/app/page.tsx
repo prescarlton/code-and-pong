@@ -2,7 +2,7 @@ import ActionMenu from "@/components/action-menu"
 import Leaderboard from "@/components/leaderboard"
 import PageWrapper from "@/components/page-wrapper"
 import Topbar from "@/components/topbar"
-import { LoaderPinwheel } from "lucide-react"
+import { LoaderCircle } from "lucide-react"
 import { Suspense } from "react"
 
 export default function Home() {
@@ -10,7 +10,11 @@ export default function Home() {
     <>
       <Topbar />
       <PageWrapper title="Leaderboard">
-        <Suspense fallback={<LoaderPinwheel className="animate-spin" />}>
+        <Suspense
+          fallback={
+            <LoaderCircle className="animate-spin mx-auto mt-4 w-12 h-12" />
+          }
+        >
           <Leaderboard />
         </Suspense>
       </PageWrapper>

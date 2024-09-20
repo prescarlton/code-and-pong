@@ -1,5 +1,4 @@
 "use client"
-import createGame from "@/actions/createGame"
 import listUsers, { ShortUser } from "@/actions/listUsers"
 import GameOverDialog from "@/components/game-over-dialog"
 import PageWrapper from "@/components/page-wrapper"
@@ -121,7 +120,7 @@ export default function ScoreKeeperPage() {
           ) : (
             <p>
               {
-                "Probably should've spent more time on error handling instead of confetti."
+                "Not sure what happened here. Probably should've spent more time on error handling instead of confetti."
               }
             </p>
           )}
