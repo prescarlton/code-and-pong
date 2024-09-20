@@ -1,6 +1,7 @@
 "use server"
 
 import calculateElo from "@/lib/calculate-elo"
+import { DEFAULT_ELO } from "@/lib/defaults"
 import { prisma } from "@/prismaClient"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
@@ -26,8 +27,8 @@ export default async function createGame({
   const opponentUser = await clerkClient.users.getUser(opponentId)
   const opponentMetadata = opponentUser.publicMetadata as { elo: number }
 
-  const myElo = myMetadata.elo || 400
-  const opponentElo = opponentMetadata.elo || 400
+  const myElo = myMetadata.elo || DEFAULT_ELO
+  const opponentElo = opponentMetadata.elo || DEFAULT_ELO
 
   // calculate the new elo scores
   const { p1NewElo, p2NewElo } = calculateElo({

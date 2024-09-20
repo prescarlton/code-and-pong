@@ -1,5 +1,6 @@
 "use server"
 
+import { DEFAULT_ELO } from "@/lib/defaults"
 import { prisma } from "@/prismaClient"
 import { clerkClient } from "@clerk/nextjs/server"
 
@@ -13,7 +14,7 @@ export default async function getLeaderboard() {
         id: u.id,
         fullName: u.fullName,
         imageUrl: u.imageUrl,
-        elo: Number(u.publicMetadata.elo) || 400,
+        elo: Number(u.publicMetadata.elo || DEFAULT_ELO),
       })),
     )
   const users = rawUsers.map((u) => {
