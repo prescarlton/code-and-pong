@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Minus, Plus } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -19,6 +20,7 @@ import useSWR from "swr"
 
 export default function PastRoundPage() {
   const [opponent, setOpponent] = useState<null | ShortUser>(null)
+  const [loading, setLoading] = useState(false)
   const [myScore, setMyScore] = useState(0)
   const [opponentScore, setOpponentScore] = useState(0)
   const router = useRouter()
@@ -27,13 +29,18 @@ export default function PastRoundPage() {
     listUsers,
   )
   const onClick = async () => {
+    setLoading(true)
     await createGame({
       opponentId: opponent!.id,
       myScore,
       opponentScore,
-    }).then(() => {
-      router.push("/")
     })
+      .then(() => {
+        router.push("/")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -79,25 +86,53 @@ export default function PastRoundPage() {
           )}
           {opponent && (
             <>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 items-center">
                 <p>My Score</p>
-                <Input
-                  type="number"
-                  value={myScore}
-                  onChange={(e) => setMyScore(Number(e.currentTarget.value))}
-                />
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="icon"
+                    onClick={() => setMyScore((prev) => prev - 1)}
+                  >
+                    <Minus />
+                  </Button>
+                  <Input
+                    value={myScore}
+                    readOnly
+                    className="w-12 text-center"
+                  />
+                  <Button
+                    size="icon"
+                    onClick={() => setMyScore((prev) => prev + 1)}
+                  >
+                    <Plus />
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 items-center">
                 <p>{`${opponent.fullName}'s Score`}</p>
-                <Input
-                  type="number"
-                  value={opponentScore}
-                  onChange={(e) =>
-                    setOpponentScore(Number(e.currentTarget.value))
-                  }
-                />
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="icon"
+                    onClick={() => setOpponentScore((prev) => prev - 1)}
+                  >
+                    <Minus />
+                  </Button>
+                  <Input
+                    value={opponentScore}
+                    readOnly
+                    className="w-12 text-center"
+                  />
+                  <Button
+                    size="icon"
+                    onClick={() => setOpponentScore((prev) => prev + 1)}
+                  >
+                    <Plus />
+                  </Button>
+                </div>
               </div>
-              <Button onClick={onClick}>Save Round</Button>
+              <Button onClick={onClick} loading={loading}>
+                Save Round
+              </Button>
             </>
           )}
         </div>
