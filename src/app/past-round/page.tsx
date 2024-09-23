@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useUser } from "@clerk/nextjs"
 import { Minus, Plus } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -28,6 +29,7 @@ export default function PastRoundPage() {
     "list-users",
     listUsers,
   )
+  const { user } = useUser()
   const onClick = async () => {
     setLoading(true)
     await createGame({
@@ -45,7 +47,7 @@ export default function PastRoundPage() {
 
   return (
     <>
-      <Topbar />
+      <Topbar isSignedIn={Boolean(user)} />
       <PageWrapper title="Enter Past Round Scores">
         <div className="flex flex-col gap-4">
           {usersLoading ? (

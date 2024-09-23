@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useUser } from "@clerk/nextjs"
 import Image from "next/image"
 import { useState } from "react"
 import useSWR from "swr"
@@ -27,6 +28,7 @@ export default function ScoreKeeperPage() {
     "list-users",
     listUsers,
   )
+  const { user } = useUser()
   // game status logic
   if (opponent && gameState === "ready") {
     setGameState("in-progress")
@@ -57,7 +59,7 @@ export default function ScoreKeeperPage() {
 
   return (
     <>
-      <Topbar />
+      <Topbar isSignedIn={Boolean(user)} />
       <PageWrapper title="Score Keeper">
         <div className="flex-1 flex flex-col gap-4">
           {gameState === "ready" ? (
