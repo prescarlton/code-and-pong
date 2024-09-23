@@ -1,16 +1,15 @@
-import { UserButton } from "@clerk/nextjs"
-import { auth } from "@clerk/nextjs/server"
+import { UserButton, useUser } from "@clerk/nextjs"
 import Link from "next/link"
 import { Button } from "./ui/button"
 
 const Topbar = () => {
-  const { userId } = auth()
+  const user = useUser()
   return (
     <div className="flex items-center justify-between px-8 py-4 fixed w-full">
       <Link href="/">
         <h2 className="text-2xl font-bold">🏓 CODE/+/PONG</h2>
       </Link>
-      {userId ? (
+      {user ? (
         <UserButton />
       ) : (
         <div className="flex items-center gap-2">
