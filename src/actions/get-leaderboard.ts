@@ -14,7 +14,7 @@ export default async function getLeaderboard() {
         id: u.id,
         fullName: u.fullName,
         imageUrl: u.imageUrl,
-        elo: Number(u.publicMetadata.elo || DEFAULT_ELO).toFixed(0),
+        elo: Math.round(Number(u.publicMetadata.elo || DEFAULT_ELO)),
       })),
     )
   const users = rawUsers.map((u) => {

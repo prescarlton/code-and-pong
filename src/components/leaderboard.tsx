@@ -1,4 +1,4 @@
-import getLeaderboard from "@/actions/getLeaderboard"
+import getLeaderboard from "@/actions/get-leaderboard"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { TrophyIcon } from "lucide-react"
 import {
