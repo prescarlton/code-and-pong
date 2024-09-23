@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <Topbar isSignedIn={Boolean(sessionId)} />
-      <PageWrapper title="Leaderboard">
+      <PageWrapper>
         <Suspense
           fallback={
             <LoaderCircle className="animate-spin mx-auto mt-4 w-12 h-12" />

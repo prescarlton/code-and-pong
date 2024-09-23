@@ -3,8 +3,12 @@ import createGame from "@/actions/create-game"
 import listUsers, { ShortUser } from "@/actions/listUsers"
 import PageWrapper from "@/components/page-wrapper"
 import Topbar from "@/components/topbar"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -12,30 +16,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useUser } from "@clerk/nextjs"
-import { Minus, Plus } from "lucide-react"
-import Image from "next/image"
+import { AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 import useSWR from "swr"
 
 export default function PastRoundPage() {
-  const [opponent, setOpponent] = useState<null | ShortUser>(null)
+  const [opponent, setOpponent] = useState("")
   const [loading, setLoading] = useState(false)
-  const [myScore, setMyScore] = useState(0)
-  const [opponentScore, setOpponentScore] = useState(0)
+  const [myScore, setMyScore] = useState("")
+  const [error, setError] = useState("")
+  const [opponentScore, setOpponentScore] = useState("")
   const router = useRouter()
   const { data: users, isLoading: usersLoading } = useSWR(
     "list-users",
     listUsers,
   )
-  const { user } = useUser()
-  const onClick = async () => {
+  const validateScores = (score1: number, score2: number) => {
+    if (score1 < 0 || score2 < 0) {
+      return "Scores cannot be negative"
+    }
+    if (Math.max(score1, score2) < 11) {
+      return "At least one player must score 11 points"
+    }
+    if (Math.abs(score1 - score2) < 2) {
+      return "The winning player must win by at least 2 points"
+    }
+    if (score1 === score2) {
+      return "The scores cannot be tied"
+    }
+    return ""
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!opponent) {
+      setError("Please select an opponent")
+      return
+    }
+    const myScoreNum = parseInt(myScore)
+    const opponentScoreNum = parseInt(opponentScore)
+
+    const validationError = validateScores(myScoreNum, opponentScoreNum)
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
     setLoading(true)
     await createGame({
-      opponentId: opponent!.id,
-      myScore,
-      opponentScore,
+      opponentId: opponent,
+      myScore: myScoreNum,
+      opponentScore: opponentScoreNum,
     })
       .then(() => {
         router.push("/")
@@ -47,97 +79,81 @@ export default function PastRoundPage() {
 
   return (
     <>
-      <Topbar isSignedIn={Boolean(user)} />
-      <PageWrapper title="Enter Past Round Scores">
-        <div className="flex flex-col gap-4">
-          {usersLoading ? (
-            <p className="flex-1">Loading...</p>
-          ) : (
-            <div className="flex flex-col flex-1 gap-1">
-              <p>Select an opponent</p>
-              {users?.length ? (
-                <Select
-                  onValueChange={(id) =>
-                    setOpponent(users.find((user) => user.id === id)!)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select opponent" />
+      <Topbar isSignedIn={true} />
+      <PageWrapper>
+        <Card className="w-full max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+              🏓 Enter Match Score
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="opponent">Select Opponent</Label>
+                <Select value={opponent} onValueChange={setOpponent} required>
+                  <SelectTrigger id="opponent">
+                    <SelectValue placeholder="Choose an opponent" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        <div className="flex flex-row items-center gap-2">
-                          <div className="w-8 h-8 rounded-full relative overflow-hidden">
-                            <Image
-                              src={user.imageUrl}
-                              alt={user.fullName || "User"}
-                              fill
+                    {users?.map((opp) => (
+                      <SelectItem key={opp.id} value={opp.id}>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="w-6 h-6">
+                            <AvatarImage
+                              src={opp.imageUrl}
+                              alt={opp.fullName || "User profile"}
                             />
-                          </div>
-                          <p>{user.fullName}</p>
+                            <AvatarFallback>
+                              {opp.fullName?.charAt(0) || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          {opp.fullName}
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              ) : (
-                <p>No Opponents found</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="yourScore">Your Score</Label>
+                <Input
+                  id="yourScore"
+                  type="number"
+                  min="0"
+                  value={myScore}
+                  onChange={(e) => setMyScore(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="opponentScore">{"Opponent's Score"}</Label>
+                <Input
+                  id="opponentScore"
+                  type="number"
+                  min="0"
+                  value={opponentScore}
+                  onChange={(e) => setOpponentScore(e.target.value)}
+                  required
+                />
+              </div>
+              {error && (
+                <Alert variant="destructive">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </div>
+                </Alert>
               )}
-            </div>
-          )}
-          {opponent && (
-            <>
-              <div className="flex flex-col gap-1 items-center">
-                <p>My Score</p>
-                <div className="flex items-center gap-1">
-                  <Button
-                    size="icon"
-                    onClick={() => setMyScore((prev) => prev - 1)}
-                  >
-                    <Minus />
-                  </Button>
-                  <Input
-                    value={myScore}
-                    readOnly
-                    className="w-12 text-center"
-                  />
-                  <Button
-                    size="icon"
-                    onClick={() => setMyScore((prev) => prev + 1)}
-                  >
-                    <Plus />
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 items-center">
-                <p>{`${opponent.fullName}'s Score`}</p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    onClick={() => setOpponentScore((prev) => prev - 1)}
-                  >
-                    <Minus />
-                  </Button>
-                  <Input
-                    value={opponentScore}
-                    readOnly
-                    className="w-12 text-center"
-                  />
-                  <Button
-                    size="icon"
-                    onClick={() => setOpponentScore((prev) => prev + 1)}
-                  >
-                    <Plus />
-                  </Button>
-                </div>
-              </div>
-              <Button onClick={onClick} loading={loading}>
-                Save Round
+
+              <Button type="submit" className="w-full" loading={loading}>
+                Submit Score
               </Button>
-            </>
-          )}
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </PageWrapper>
     </>
   )

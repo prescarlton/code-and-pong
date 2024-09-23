@@ -14,21 +14,21 @@ export default async function getLeaderboard() {
         id: u.id,
         fullName: u.fullName,
         imageUrl: u.imageUrl,
-        elo: Number(u.publicMetadata.elo || DEFAULT_ELO),
+        elo: Number(u.publicMetadata.elo || DEFAULT_ELO).toFixed(0),
       })),
     )
   const users = rawUsers.map((u) => {
     const gamesPlayed = games.filter((g) => g.players.includes(u.id)).length
-    const gamesWon = games.filter((g) => g.winners.includes(u.id)).length
-    const gamesLost = gamesPlayed - gamesWon
+    const wins = games.filter((g) => g.winners.includes(u.id)).length
+    const losses = gamesPlayed - wins
     return {
       ...u,
-      gamesWon,
-      gamesLost,
+      wins,
+      losses,
     }
   })
   // sort users by highest score
   return users
     .sort((a, b) => b.elo - a.elo)
-    .filter((u) => u.gamesWon > 0 || u.gamesLost > 0)
+    .filter((u) => u.wins > 0 || u.losses > 0)
 }
