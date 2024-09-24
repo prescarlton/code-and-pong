@@ -1,8 +1,7 @@
 "use client"
 import createGame from "@/actions/create-game"
-import listUsers, { ShortUser } from "@/actions/listUsers"
+import listUsers from "@/actions/listUsers"
 import PageWrapper from "@/components/page-wrapper"
-import Topbar from "@/components/topbar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -78,83 +77,80 @@ export default function PastRoundPage() {
   }
 
   return (
-    <>
-      <Topbar isSignedIn={true} />
-      <PageWrapper>
-        <Card className="w-full max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              🏓 Enter Match Score
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="opponent">Select Opponent</Label>
-                <Select value={opponent} onValueChange={setOpponent} required>
-                  <SelectTrigger id="opponent">
-                    <SelectValue placeholder="Choose an opponent" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users?.map((opp) => (
-                      <SelectItem key={opp.id} value={opp.id}>
-                        <div className="flex items-center gap-2">
-                          <Avatar className="w-6 h-6">
-                            <AvatarImage
-                              src={opp.imageUrl}
-                              alt={opp.fullName || "User profile"}
-                            />
-                            <AvatarFallback>
-                              {opp.fullName?.charAt(0) || "U"}
-                            </AvatarFallback>
-                          </Avatar>
-                          {opp.fullName}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+    <PageWrapper>
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold flex items-center gap-2">
+            🏓 Enter Match Score
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="opponent">Select Opponent</Label>
+              <Select value={opponent} onValueChange={setOpponent} required>
+                <SelectTrigger id="opponent">
+                  <SelectValue placeholder="Choose an opponent" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users?.map((opp) => (
+                    <SelectItem key={opp.id} value={opp.id}>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="w-6 h-6">
+                          <AvatarImage
+                            src={opp.imageUrl}
+                            alt={opp.fullName || "User profile"}
+                          />
+                          <AvatarFallback>
+                            {opp.fullName?.charAt(0) || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        {opp.fullName}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="yourScore">Your Score</Label>
-                <Input
-                  id="yourScore"
-                  type="number"
-                  min="0"
-                  value={myScore}
-                  onChange={(e) => setMyScore(e.target.value)}
-                  required
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="yourScore">Your Score</Label>
+              <Input
+                id="yourScore"
+                type="number"
+                min="0"
+                value={myScore}
+                onChange={(e) => setMyScore(e.target.value)}
+                required
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="opponentScore">{"Opponent's Score"}</Label>
-                <Input
-                  id="opponentScore"
-                  type="number"
-                  min="0"
-                  value={opponentScore}
-                  onChange={(e) => setOpponentScore(e.target.value)}
-                  required
-                />
-              </div>
-              {error && (
-                <Alert variant="destructive">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </div>
-                </Alert>
-              )}
+            <div className="space-y-2">
+              <Label htmlFor="opponentScore">{"Opponent's Score"}</Label>
+              <Input
+                id="opponentScore"
+                type="number"
+                min="0"
+                value={opponentScore}
+                onChange={(e) => setOpponentScore(e.target.value)}
+                required
+              />
+            </div>
+            {error && (
+              <Alert variant="destructive">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </div>
+              </Alert>
+            )}
 
-              <Button type="submit" className="w-full" loading={loading}>
-                Submit Score
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </PageWrapper>
-    </>
+            <Button type="submit" className="w-full" loading={loading}>
+              Submit Score
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </PageWrapper>
   )
 }

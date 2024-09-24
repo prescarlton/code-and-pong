@@ -38,15 +38,15 @@ export default async function createGame({
     p2Score: opponentScore,
   })
 
-  if (process.env.NODE_ENV !== "development") {
-    // update the elo scores
-    await clerkClient.users.updateUser(userId, {
-      publicMetadata: { ...myMetadata, elo: p1NewElo },
-    })
-    await clerkClient.users.updateUser(opponentId, {
-      publicMetadata: { ...opponentMetadata, elo: p2NewElo },
-    })
-  }
+  // if (process.env.NODE_ENV !== "development") {
+  //   // update the elo scores
+  //   await clerkClient.users.updateUser(userId, {
+  //     publicMetadata: { ...myMetadata, elo: p1NewElo },
+  //   })
+  //   await clerkClient.users.updateUser(opponentId, {
+  //     publicMetadata: { ...opponentMetadata, elo: p2NewElo },
+  //   })
+  // }
 
   // create the game
   const game = await prisma.game.create({
@@ -74,6 +74,14 @@ export default async function createGame({
         gameId: game.id,
       })),
     ],
+  })
+  // finally, create the game request
+  await prisma.gameRequest.create({
+    data: {
+      gameId: game.id,
+      requestedOpponentId: opponentId,
+      requestedByUserId: userId,
+    },
   })
   revalidatePath("/")
   // find out who da winner is

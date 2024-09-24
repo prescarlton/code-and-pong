@@ -1,7 +1,6 @@
 import ActionMenu from "@/components/action-menu"
 import Leaderboard from "@/components/leaderboard"
 import PageWrapper from "@/components/page-wrapper"
-import Topbar from "@/components/topbar"
 import { auth } from "@clerk/nextjs/server"
 import { LoaderCircle } from "lucide-react"
 import { Suspense } from "react"
@@ -10,7 +9,6 @@ export default function Home() {
   const { sessionId } = auth()
   return (
     <>
-      <Topbar isSignedIn={Boolean(sessionId)} />
       <PageWrapper>
         <Suspense
           fallback={

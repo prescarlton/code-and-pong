@@ -21,7 +21,8 @@ model Game {
   players String[]
   winners String[]
 
-  scores GameScore[]
+  Scores      GameScore[]
+  GameRequest GameRequest?
 
   @@map("games")
 }
@@ -33,7 +34,21 @@ model GameScore {
   scoringUserId       String @map("scoring_user_id")
   scoredAgainstUserId String @map("scored_against_user_id")
 
-  Game Game @relation(fields: [gameId], references: [id])
+  Game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@map("game_scores")
+}
+
+model GameRequest {
+  id String @id @default(nanoid(12))
+
+  gameId              String @unique @map("game_id")
+  requestedByUserId   String @map("requested_by_user_id")
+  requestedOpponentId String @map("requested_opponent_id")
+
+  Game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  created DateTime @default(now())
+
+  @@map("game_requests")
 }

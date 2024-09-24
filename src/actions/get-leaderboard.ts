@@ -5,7 +5,13 @@ import { prisma } from "@/prismaClient"
 import { clerkClient } from "@clerk/nextjs/server"
 
 export default async function getLeaderboard() {
-  const games = await prisma.game.findMany({})
+  const games = await prisma.game.findMany({
+    where: {
+      GameRequest: {
+        is: null,
+      },
+    },
+  })
 
   const rawUsers = await clerkClient.users
     .getUserList({ limit: 200 })

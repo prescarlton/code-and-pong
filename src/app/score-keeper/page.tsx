@@ -3,7 +3,6 @@ import listUsers, { ShortUser } from "@/actions/listUsers"
 import GameOverDialog from "@/components/game-over-dialog"
 import PageWrapper from "@/components/page-wrapper"
 import ScoreCard from "@/components/score-card"
-import Topbar from "@/components/topbar"
 import {
   Select,
   SelectContent,
@@ -11,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useUser } from "@clerk/nextjs"
 import Image from "next/image"
 import { useState } from "react"
 import useSWR from "swr"
@@ -28,7 +26,6 @@ export default function ScoreKeeperPage() {
     "list-users",
     listUsers,
   )
-  const { user } = useUser()
   // game status logic
   if (opponent && gameState === "ready") {
     setGameState("in-progress")
@@ -58,76 +55,69 @@ export default function ScoreKeeperPage() {
   }
 
   return (
-    <>
-      <Topbar isSignedIn={Boolean(user)} />
-      <PageWrapper title="Score Keeper">
-        <div className="flex-1 flex flex-col gap-4">
-          {gameState === "ready" ? (
-            usersLoading ? (
-              <p className="flex-1">Loading...</p>
-            ) : (
-              <div className="flex flex-col flex-1 gap-2">
-                <p>Select an opponent to get started</p>
-                {users?.length ? (
-                  <Select
-                    onValueChange={(id) =>
-                      setOpponent(users.find((user) => user.id === id)!)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select opponent" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          <div className="flex flex-row items-center gap-2">
-                            <div className="w-8 h-8 rounded-full relative overflow-hidden">
-                              <Image
-                                src={user.imageUrl}
-                                alt={user.fullName || "User"}
-                                fill
-                              />
-                            </div>
-                            <p>{user.fullName}</p>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p>No Opponents found</p>
-                )}
-              </div>
-            )
-          ) : gameState === "in-progress" && opponent ? (
-            <>
-              <ScoreCard
-                playerName="me"
-                score={myScore}
-                setScore={setMyScore}
-              />
-              <ScoreCard
-                playerName={opponent.fullName || "Opponent"}
-                score={opponentScore}
-                setScore={setOpponentScore}
-              />
-              <GameOverDialog
-                isOpen={isDialogOpen}
-                close={closeDialog}
-                myScore={myScore}
-                opponentScore={opponentScore}
-                opponent={opponent}
-              />
-            </>
+    <PageWrapper title="Score Keeper">
+      <div className="flex-1 flex flex-col gap-4">
+        {gameState === "ready" ? (
+          usersLoading ? (
+            <p className="flex-1">Loading...</p>
           ) : (
-            <p>
-              {
-                "Not sure what happened here. Probably should've spent more time on error handling instead of confetti."
-              }
-            </p>
-          )}
-        </div>
-      </PageWrapper>
-    </>
+            <div className="flex flex-col flex-1 gap-2">
+              <p>Select an opponent to get started</p>
+              {users?.length ? (
+                <Select
+                  onValueChange={(id) =>
+                    setOpponent(users.find((user) => user.id === id)!)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select opponent" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        <div className="flex flex-row items-center gap-2">
+                          <div className="w-8 h-8 rounded-full relative overflow-hidden">
+                            <Image
+                              src={user.imageUrl}
+                              alt={user.fullName || "User"}
+                              fill
+                            />
+                          </div>
+                          <p>{user.fullName}</p>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p>No Opponents found</p>
+              )}
+            </div>
+          )
+        ) : gameState === "in-progress" && opponent ? (
+          <>
+            <ScoreCard playerName="me" score={myScore} setScore={setMyScore} />
+            <ScoreCard
+              playerName={opponent.fullName || "Opponent"}
+              score={opponentScore}
+              setScore={setOpponentScore}
+            />
+            <GameOverDialog
+              isOpen={isDialogOpen}
+              close={closeDialog}
+              myScore={myScore}
+              opponentScore={opponentScore}
+              opponent={opponent}
+            />
+          </>
+        ) : (
+          <p>
+            {
+              "Not sure what happened here. Probably should've spent more time on error handling instead of confetti."
+            }
+          </p>
+        )}
+      </div>
+    </PageWrapper>
   )
 }
