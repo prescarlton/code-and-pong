@@ -4,7 +4,20 @@ import { DEFAULT_ELO } from "@/lib/defaults"
 import { prisma } from "@/prismaClient"
 import { clerkClient } from "@clerk/nextjs/server"
 
-export default async function getLeaderboard() {
+export interface LeaderboardPlayer {
+  id: string
+  fullName: string
+  imageUrl: string
+  elo: number
+  wins: number
+  losses: number
+  gamesPlayed: number
+}
+
+export default async function getLeaderboard(): Promise<{
+  rankedPlayers: LeaderboardPlayer[]
+  unrankedPlayers: LeaderboardPlayer[]
+}> {
   const games = await prisma.game.findMany({
     where: {
       GameRequest: {
@@ -29,12 +42,17 @@ export default async function getLeaderboard() {
     const losses = gamesPlayed - wins
     return {
       ...u,
+      fullName: u.fullName || "Anonymous",
       wins,
       losses,
+      gamesPlayed,
     }
   })
-  // sort users by highest score
-  return users
+  const rankedPlayers = users
+    .filter((u) => u.gamesPlayed >= 10)
     .sort((a, b) => b.elo - a.elo)
-    .filter((u) => u.wins + u.losses >= 10)
+  const unrankedPlayers = users
+    .filter((u) => u.gamesPlayed < 10)
+    .sort((a, b) => b.elo - a.elo)
+  return { rankedPlayers, unrankedPlayers }
 }
