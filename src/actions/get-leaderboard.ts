@@ -36,5 +36,5 @@ export default async function getLeaderboard() {
   // sort users by highest score
   return users
     .sort((a, b) => b.elo - a.elo)
-    .filter((u) => u.wins > 0 || u.losses > 0)
+    .filter((u) => u.wins + u.losses >= 10)
 }
