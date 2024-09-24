@@ -20,7 +20,7 @@ export default function PlayerTable({ players, isRanked }: PlayerTableProps) {
           <TableHead className="text-right">ELO</TableHead>
           {!isRanked && (
             <TableHead className="text-right w-[200px]">
-              Games to Rank
+              Games until Ranked
             </TableHead>
           )}
         </TableRow>
