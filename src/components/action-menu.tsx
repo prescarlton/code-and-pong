@@ -12,7 +12,7 @@ const ActionMenu = () => {
   const toggleMenu = () => setIsOpen((prev) => !prev)
 
   const menuItems = [
-    { href: "/score-keeper", icon: PlayCircle, label: "Start New Round" },
+    // { href: "/score-keeper", icon: PlayCircle, label: "Start New Round" },
     { href: "/past-round", icon: ClipboardEdit, label: "Enter Past Round" },
   ]
 

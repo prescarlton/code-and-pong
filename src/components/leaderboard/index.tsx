@@ -1,15 +1,16 @@
 import getLeaderboard from "@/actions/get-leaderboard"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import PlayerTable from "./player-table"
+import { TrophyIcon } from "lucide-react"
 
 const Leaderboard = async () => {
   const { rankedPlayers, unrankedPlayers } = await getLeaderboard()
   return (
     <div className="w-full mx-auto flex flex-col gap-8">
       <Card className="w-full">
-        <CardHeader className="items-center">
+        <CardHeader>
           <CardTitle className="text-3xl font-bold flex items-center gap-2">
-            Ranked Leaderboard
+            <TrophyIcon /> Ranked Players
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -17,9 +18,9 @@ const Leaderboard = async () => {
         </CardContent>
       </Card>
       <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="items-center">
+        <CardHeader>
           <CardTitle className="text-3xl font-bold flex items-center gap-2">
-            Unranked Leaderboard
+            Unranked Players
           </CardTitle>
         </CardHeader>
         <CardContent>

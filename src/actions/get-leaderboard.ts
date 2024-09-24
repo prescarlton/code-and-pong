@@ -48,10 +48,11 @@ export default async function getLeaderboard(): Promise<{
       gamesPlayed,
     }
   })
-  const rankedPlayers = users
+  const usersWithGames = users.filter((u) => u.gamesPlayed > 0)
+  const rankedPlayers = usersWithGames
     .filter((u) => u.gamesPlayed >= 10)
     .sort((a, b) => b.elo - a.elo)
-  const unrankedPlayers = users
+  const unrankedPlayers = usersWithGames
     .filter((u) => u.gamesPlayed < 10)
     .sort((a, b) => b.elo - a.elo)
   return { rankedPlayers, unrankedPlayers }
